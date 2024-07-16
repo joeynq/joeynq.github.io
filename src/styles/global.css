@@ -1,0 +1,16 @@
+@keyframes fadeOut {
+  0% {
+    opacity: 1 !important;
+  }
+  100% {
+    opacity: 0 !important;
+  }
+}
+
+.fadeOut {
+  animation-timing-function: ease-out;
+  animation-name: fadeOut;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+  animation-delay: 2s;
+}

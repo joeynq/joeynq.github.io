@@ -1,0 +1,19 @@
+---
+interface Props {
+	date: Date;
+}
+
+const { date } = Astro.props;
+
+const day = date.toLocaleDateString("en-us", {
+	day: "2-digit",
+});
+const month = date.toLocaleDateString("en-us", {
+	month: "2-digit",
+});
+
+---
+
+<time datetime={date.toISOString()} class="text-2xl">
+	{day}<span class="text-shade-dimmed" style={{ "font-feature-settings": '"sups" 1' }}>{month}</span>
+</time>

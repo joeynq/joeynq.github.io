@@ -1,0 +1,87 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
+import Master from "~/layouts/Master.astro";
+
+export async function getStaticPaths() {
+  const posts = (await getCollection("blog")).sort(
+    (a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf(),
+  );
+  return posts.map((post, i) => ({
+    params: { slug: post.slug },
+    props: {
+      post,
+      next: posts[i + 1],
+    },
+  }));
+}
+type Props = {
+  post: CollectionEntry<"blog">;
+  next: CollectionEntry<"blog"> | undefined;
+};
+
+const { post, next } = Astro.props;
+const { Content } = await post.render();
+---
+
+<Master title={post.data.title} description={post.data.description}>
+  <h1 class="flex gap-8" slot="page-title">{post.data.title}</h1>
+  <article class="prose prose-slate">
+    <div class="lead">{post.data.description}</div>
+    <Content />
+  </article>
+  <nav class="fixed bottom-8 right-8 text-right">
+    <ul class="flex flex-col items-end gap-2">
+      <li>
+        <a href="/" class="flex items-center gap-2">
+          <div class="text-sm">Back to list</div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-up-left w-8 h-8"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+            <path d="M7 7l10 10"></path>
+            <path d="M16 7l-9 0l0 9"></path>
+          </svg>
+        </a>
+      </li>
+      {
+        next && (
+          <li>
+            <a href={next?.slug} class="flex items-center gap-2">
+              <div>
+                <div class="text-sm">Next post</div>
+                <div class="text-xs">{next?.data.title}</div>
+              </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-right w-8 h-8"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M5 12l14 0" />
+                <path d="M13 18l6 -6" />
+                <path d="M13 6l6 6" />
+              </svg>
+            </a>
+          </li>
+        )
+      }
+    </ul>
+  </nav>
+</Master>
